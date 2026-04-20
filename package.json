@@ -1,0 +1,31 @@
+{
+  "name": "oem-feature-radar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Täglicher Feature-Monitor für deutsche OEM-Websites (BMW, Audi, Mercedes, Porsche, VW).",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx db/seed.ts",
+    "run:daily": "tsx scripts/run-daily.ts",
+    "run:daily:bmw": "tsx scripts/run-daily.ts --oem bmw",
+    "run:daily:audi": "tsx scripts/run-daily.ts --oem audi",
+    "browsers:install": "playwright install chromium --with-deps"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
+    "@supabase/supabase-js": "^2.58.0",
+    "openai": "^6.0.0",
+    "playwright": "^1.54.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
