@@ -1,11 +1,11 @@
-/**
+﻿/**
  * crawler/core/browser.ts
  * ---------------------------------------------------------------------------
  * Playwright-Launch + Page-Navigation + Cookie-Banner-Akzeptanz pro OEM.
  *
  * Designregeln:
  *  - Ein Browser pro Run (geteilt), eine frische Page pro URL.
- *  - Stealth-Plugin an: viele OEMs prüfen navigator.webdriver etc.
+ *  - Stealth-Plugin an: viele OEMs prÃ¼fen navigator.webdriver etc.
  *  - Navigation mit zwei Versuchen, networkidle + festem Puffer.
  *  - Cookie-Banner werden best-effort geschlossen; scheitert es, loggen
  *    wir das und crawlen trotzdem (Inventory-Filter verwirft dann meist
@@ -78,7 +78,7 @@ export interface NavigationResult {
 /**
  * Navigiert zur URL, wartet auf networkidle + festen Puffer, versucht
  * Cookie-Banner zu akzeptieren. Wirft nicht; gibt stattdessen ein
- * Ergebnisobjekt zurück.
+ * Ergebnisobjekt zurÃ¼ck.
  */
 export async function navigate(
     page: Page,
@@ -92,7 +92,7 @@ export async function navigate(
     for (let attempt = 0; attempt <= CRAWL_LIMITS.maxRetriesPerUrl; attempt++) {
         try {
             const response = await page.goto(url, {
-                waitUntil: 'networkidle',
+                waitUntil: 'domcontentloaded',
                 timeout: CRAWL_LIMITS.pageLoadTimeoutMs,
             });
             httpStatus = response?.status() ?? null;
@@ -137,7 +137,7 @@ export async function navigate(
  * wird geklickt. Wenn nichts klickbar ist, geben wir auf und crawlen die
  * Seite trotzdem.
  *
- * Reihenfolge: OEM-spezifisch → generisch.
+ * Reihenfolge: OEM-spezifisch â†’ generisch.
  */
 const COOKIE_SELECTORS: Record<string, string[]> = {
     bmw: [
@@ -146,10 +146,14 @@ const COOKIE_SELECTORS: Record<string, string[]> = {
         'button:has-text("Akzeptieren")',
     ],
     audi: [
-        'button[data-testid="uc-accept-all-button"]',
+        'button#cookie-accept-button',
         'button:has-text("Alle akzeptieren")',
+        'button[data-testid="uc-accept-all-button"]',
+        '[data-testid="uc-accept-all-button"]',
         'button:has-text("Akzeptieren und weiter")',
+        'button:has-text("Akzeptieren")',
         '#onetrust-accept-btn-handler',
+        'button[mode="primary"]:has-text("Alle akzeptieren")',
     ],
     mercedes: [
         '#onetrust-accept-btn-handler',
@@ -195,14 +199,14 @@ async function acceptCookies(page: Page, oemSlug: string): Promise<void> {
             await page.waitForTimeout(800);
             return;
         } catch {
-            // Nächster Selektor
+            // NÃ¤chster Selektor
         }
     }
-    // Kein Banner gefunden oder nicht klickbar – das ist ok.
+    // Kein Banner gefunden oder nicht klickbar â€“ das ist ok.
 }
 
 // ---------------------------------------------------------------------------
-// Hilfs-Utility: sanftes Scrollen für Lazy-Loading
+// Hilfs-Utility: sanftes Scrollen fÃ¼r Lazy-Loading
 // ---------------------------------------------------------------------------
 
 async function softScroll(page: Page): Promise<void> {
@@ -218,6 +222,6 @@ async function softScroll(page: Page): Promise<void> {
             window.scrollTo(0, 0);
         });
     } catch {
-        // irrelevant – war nur Best-Effort
+        // irrelevant â€“ war nur Best-Effort
     }
 }
